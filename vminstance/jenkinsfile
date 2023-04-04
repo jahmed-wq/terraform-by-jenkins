@@ -37,15 +37,18 @@ pipeline {
 		 }
 	 }
 	 
-	          stage('Terraform plan') {
+	          
+	stage('Terraform Plan') {
 		 steps {  
 			  dir('vminstance')
 			 {
-                sh 'terraform plan'
+			 
+                 sh 'terraform plan'
+		 
+		 
 			 }
 		 }
-	 }
-		
+	 }	
 	
 	stage('Terraform Action') {
 		 steps {  
@@ -56,6 +59,3 @@ pipeline {
 			 }
 		 }
 	}
-
-}
-}
