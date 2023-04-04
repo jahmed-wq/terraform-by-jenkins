@@ -54,7 +54,7 @@ pipeline {
 		 steps {  
 			  dir('vminstance')
 			 {
-		 sh 'terraform $TF_ACTIONS -auto-approve'
+		 sh 'terraform $TF_ACTION -auto-approve'
 				
 			 }
 		 }
