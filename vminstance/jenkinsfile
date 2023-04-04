@@ -1,53 +1,61 @@
 pipeline {
     agent any
 
-    tools {
-        terraform "Terraform"
-    }
 
     environment {
-        SVC_ACCOUNT_KEY = credentials('terraform-auth')
-    }
-
+    SVC_ACCOUNT_KEY = credentials('terraform-auth')
+  }
+     
     stages {
-        stage ('checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/jahmed-wq/terraform-by-jenkins.git'
-            }
-        }  
+       stage ('checkout'){
+          steps {
+	      git branch: 'main', url: 'https://github.com/jahmed-wq/terraform-by-jenkins.git'
+	  }
+       }  
+                                                                                                                           
 
-        stage('Set Terraform path') {
+	stage('Set Terraform path') {
             steps {
                 script {
-                    env.PATH = "${tool 'Terraform'}/bin:${env.PATH}"
+                    def tfHome = tool name: 'Terraform'
+                    env.PATH = "${tfHome}:${env.PATH}"
                 }
                 sh 'echo $SVC_ACCOUNT_KEY | base64 -d > ./vminstance/terraform.json'
                 sh 'terraform --version'               
+               
             }
         }
 	    
-	    stage('Initialize Terraform') {
-            steps {  
-                dir('vminstance') {
-                    sh 'terraform init'
-                }
-            }
-        }
+	   
+        
+         stage('Initialize Terraform') {
+		 steps {  
+			  dir('vminstance')
+			 {
+                sh 'terraform init'
+			 }
+		 }
+	 }
 	 
-	    stage('Terraform plan') {
-            steps {  
-                dir('vminstance') {
-                    sh 'terraform plan'
-                }
-            }
-        }
+	          stage('Terraform plan') {
+		 steps {  
+			  dir('vminstance')
+			 {
+                sh 'terraform plan'
+			 }
+		 }
+	 }
 		
-        stage('Terraform Action') {
-            steps {  
-                dir('vminstance') {
-                    sh "terraform ${TF_ACTIONS} ${TF_APPROVE}"
-                }
-            }
-        }
-    }
+	
+	stage('Terraform Action') {
+		 steps {  
+			  dir('vminstance')
+			 {
+		 sh 'terraform $TF_ACTIONS $TF_APPROVE'
+				
+			 }
+		 }
+	}
+
+}
 }
